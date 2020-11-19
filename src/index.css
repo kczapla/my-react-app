@@ -49,3 +49,6 @@ body {
     margin-left: 20px;
   }
   
+  .currently-selected-button {
+    font-weight: bold;
+  }

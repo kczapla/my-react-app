@@ -20,27 +20,23 @@ function Square(props) {
         />
       );
     }
+
+    createBoard() {
+      let board = [];
+      let index = 0;
+      for (let i = 0; i < this.props.size; i++) {
+        let squares = [];
+        for (let j = 0; j < this.props.size; j++) {
+          squares.push(this.renderSquare(index));
+          index++;
+        }
+        board.push(<div className="board-row">{squares}</div>);
+      }
+      return <div>{board}</div>;
+    }
   
     render() {
-      return (
-        <div>
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div>
-        </div>
-      );
+      return this.createBoard();
     }
   }
   
@@ -75,7 +71,7 @@ function Square(props) {
         return (
           <li key={move}>
             <button  
-              className={(this.state.stepNumber == move ? "currently-selected-button" : "regular-button")} 
+              className={(this.state.stepNumber === move ? "currently-selected-button" : "regular-button")} 
               onClick={() => this.jumpTo(move)}>{desc}</button>
           </li>
         );
@@ -91,6 +87,7 @@ function Square(props) {
         <div className="game">
           <div className="game-board">
             <Board
+              size={3}
               squares={current.squares}
               onClick={(i) => this.handleClick(i)}
              />

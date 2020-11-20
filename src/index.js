@@ -5,7 +5,7 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={props.name} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -15,6 +15,7 @@ function Square(props) {
     renderSquare(i) {
       return (
         <Square 
+          name={this.props.winingSequence.includes(i) ? "winner-square" : "square"}
           value={this.props.squares[i]} 
           onClick={() => this.props.onClick(i)}
         />
@@ -79,7 +80,7 @@ function Square(props) {
 
       let status;
       if (winner) {
-        status = 'Winner: ' + winner;
+        status = 'Winner: ' + winner.symbol;
       } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
@@ -88,6 +89,7 @@ function Square(props) {
           <div className="game-board">
             <Board
               size={3}
+              winingSequence={winner ? winner.sequence : [-1, -1, -1]}
               squares={current.squares}
               onClick={(i) => this.handleClick(i)}
              />
@@ -131,8 +133,8 @@ function Square(props) {
     document.getElementById('root')
   );
 
-  function calculateWinner(squares) {
-    const lines = [
+  function getWininingCombinations() {
+    return [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -142,10 +144,15 @@ function Square(props) {
       [0, 4, 8],
       [2, 4, 6],
     ];
+  }
+
+  function calculateWinner(squares) {
+    const lines = getWininingCombinations();
+
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return {symbol: squares[a], sequence: lines[i]};
       }
     }
     return null;

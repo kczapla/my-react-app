@@ -47,9 +47,11 @@ function Square(props) {
       this.state = {
         history: [{
           squares: Array(9).fill(null),
+          number: 0
         }],
         stepNumber: 0,
         xIsNext: true,
+        isAscendingOrder: true,
       }
     }
 
@@ -61,19 +63,23 @@ function Square(props) {
     }
 
     render() {
-      const history = this.state.history;
+      let history = this.state.history;
       const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
 
+      if (!this.state.isAscendingOrder) {
+        history = history.slice().reverse()
+      }
+
       const moves = history.map((step, move) => {
-        const desc = move ?
-          'Go to move #' + move + "(" + step.row + "," + step.col + ")":
+        const desc = step.number > 0 ?
+          'Go to move #' + step.number + "(" + step.row + "," + step.col + ")":
           'Go to game start';
         return (
           <li key={move}>
             <button  
-              className={(this.state.stepNumber === move ? "currently-selected-button" : "regular-button")} 
-              onClick={() => this.jumpTo(move)}>{desc}</button>
+              className={(this.state.stepNumber === step.number ? "currently-selected-button" : "regular-button")} 
+              onClick={() => this.jumpTo(step.number)}>{desc}</button>
           </li>
         );
       })
@@ -84,6 +90,7 @@ function Square(props) {
       } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
+
       return (
         <div className="game">
           <div className="game-board">
@@ -96,10 +103,17 @@ function Square(props) {
           </div>
           <div className="game-info">
             <div>{status}</div>
+            <button onClick={() => this.handleOrder()}>
+              {this.state.isAscendingOrder ? "sort descending" : "sort ascending"}
+            </button>
             <ol>{moves}</ol>
           </div>
         </div>
       );
+    }
+
+    handleOrder() {
+      this.setState({isAscendingOrder: !this.state.isAscendingOrder});
     }
 
     handleClick(i) {
@@ -116,7 +130,8 @@ function Square(props) {
         history: history.concat([{
           squares: squares,
           row: row,
-          col: col
+          col: col,
+          number: current.number + 1,
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext,

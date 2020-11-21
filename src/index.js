@@ -87,6 +87,8 @@ function Square(props) {
       let status;
       if (winner) {
         status = 'Winner: ' + winner.symbol;
+      } else if (!areFreeSquaresAvailable(current.squares)) {
+        status = 'Draw';
       } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
@@ -147,6 +149,10 @@ function Square(props) {
     <Game />,
     document.getElementById('root')
   );
+
+  function areFreeSquaresAvailable(squares) {
+    return squares.some(square => square === null);
+  }
 
   function getWininingCombinations() {
     return [
